@@ -1,12 +1,74 @@
-# React + Vite
+#  Retina Diagnostic Web Application Powered by AI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project combines the power of deep learning with a modern web architecture to create an accessible and efficient diagnostic tool for healthcare professionals.
 
-Currently, two official plugins are available:
+## Purpose and Medical Context
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Retinal diseases such as Diabetic Retinopathy, Age-related Macular Degeneration, and Hypertensive Retinopathy are among the leading causes of vision impairment and blindness worldwide. Early detection is critical. However, specialized diagnostic equipment and trained ophthalmologists are not always readily available, especially in low-resource settings.
 
-## Expanding the ESLint configuration
+Our solution aims to bridge that gap — by providing a cloud-based AI diagnostic system that can analyze fundus images and assist medical professionals in identifying possible signs of retinal pathology within seconds.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Deep Learning Model
+
+At the core of this application is a ResNet50 convolutional neural network — a well-established architecture originally trained on ImageNet and fine-tuned using a dataset of labeled retinal fundus images.
+
+This model has been trained to classify images into multiple categories. For example:
+
+Normal retina
+
+Signs of Diabetic Retinopathy
+
+Signs of Macular Degeneration
+
+Other vascular anomalies
+
+The model performs preprocessing steps like resizing and normalizing the input image, then feeds it through the ResNet layers to extract complex visual features. The final fully connected layer outputs a probability distribution over the diagnostic categories.
+
+## Software Architecture
+
+The application consists of three fully integrated components:
+
+1. Frontend (User Interface)
+Built with React, using Vite for bundling and TailwindCSS for styling, the frontend provides an intuitive and responsive interface. It allows users to:
+
+Upload a retinal image
+
+Trigger the diagnostic prediction
+
+Instantly view the result
+
+The frontend performs basic file validation and communicates with the backend via HTTP requests.
+
+2. Backend (Express.js Gateway)
+This layer, built with Node.js and Express, serves as the bridge between the frontend and the AI engine. It handles:
+
+Image upload and storage using multer
+
+File management
+
+Communication with the Python-based model server using axios
+
+The Express backend decouples the client and model server, improving modularity and scalability.
+
+3. Model Server (FastAPI + PyTorch)
+The AI core is powered by FastAPI and PyTorch. When an image is uploaded:
+
+The server loads the trained ResNet50 model from a .pth file
+
+The image is preprocessed using torchvision.transforms
+
+A prediction is returned as a structured JSON response
+
+This Python microservice is fast, efficient, and fully compatible with modern ML deployment standards.
+
+## Integration Flow
+
+The flow of the application is as follows:
+
+1. The user uploads a fundus image via the React interface.
+
+2. The Express backend receives the image, saves it temporarily, and forwards it to the FastAPI server.
+
+3. The FastAPI server loads the image, processes it through the neural network, and returns the predicted condition.
+
+4. The frontend displays the diagnosis, allowing the user to interpret or export the results.
